@@ -1,68 +1,60 @@
-
+import os
 import glob
 
 configfile: "config.yaml"
 
 
-metagenome = glob()
+SAMPLES = [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.fna")] + \
+            [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.fa")] + \
+            [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.fasta")]
+
 
 rule all:
-    output:
-        expand("results/{sample}.treefile", sample=glob("data/*.fna"))
-        expand("results/{sample}.svg", sample=glob("data/*.fna"))
+    input:
+        expand("diagrams/{sample}.svg", sample=SAMPLES)
 
 
-rule CLASSIFY_SEQUENCES:
+rule align_all:
     input: 
-        fasta = "data/{filename}.fna"
+        glob.glob("raw_data/*.fna"),
+        glob.glob("raw_data/*.fasta"),
+        glob.glob("raw_data/*.fa")
     output:
-        euk = "results/{filename}/work/eukaryote_data.tsv",
-        mito = "results/{filename}/work/mitochondria_data.tsv"
-    conda: "envs/default.yaml"
-    run:
-        """
-        
-        """
-
-rule CREATE_MAFFT:
-    input:
-    output:
-    conda:
-    run:
-
-rule BLAST_SEQUENCES:
-    input:
-    output:
-    conda:
-    run:
-
-rule ALIGN_SEQUENCES:
-    input: euk="{filename}_emafft.fna", mito="{filename}_mmafft.fna"
-    output: euk="{filename}_eal.fna", mito="{filename}_mal.fna"
-    conda:
+        expand("aligned/{sample}.aln", sample=SAMPLES)
+    log:
+        "logs/mafft_all.log"
     shell:
-        """
-        mafft auto {input.euk} > {output.euk}
-        mafft auto {input.mito} > {output.mito}
-        """
+       "python3 scripts/mafftall.py -r . > {log} 2>&1"
 
-rule GENERATE_TREES:
-    input: euk="{filename}_eal.fna", mito="{filename}_mal.fna"
-    output: 
-    conda:
-    shell: 
-
-rule COMPARE_ORDERS:
-    input:
-    output:
-    conda:
-    run:
-
-rule SINGLE_TREES:
-
-    
-rule COPHYLOGENETIC_ANALYSIS:
+rule matrix_all:
     input: 
-    output: 
-    conda:
-    run: 
+        glob.glob("raw_data/*.fna"),
+        glob.glob("raw_data/*.fasta"),
+        glob.glob("raw_data/*.fa")
+    output:
+        expand("matrices/{sample}_data_matrix.tsv", sample=SAMPLES)
+    log:
+        "logs/matrix_all.log"
+    shell:
+       "python3 scripts/matrixall.py -r . -s {config[blast_db]} > {log} 2>&1"
+
+rule align_all:
+    input: 
+        expand("aligned/{sample}.aln", sample=SAMPLES)
+    output:
+        expand("treefiles/{sample}.treefile", sample=SAMPLES)
+    log:
+        "logs/tree_all.log"
+    shell:
+       "python3 scripts/treeall.py -r . > {log} 2>&1"
+
+rule decorate_all:
+    input: 
+        trees=expand("treefiles/{sample}.treefile", sample=SAMPLES),
+        matrices=expand("matrices/{sample}_data_matrix.tsv", sample=SAMPLES)
+    output:
+        expand("diagrams/{sample}.svg", sample=SAMPLES)
+    log:
+        "logs/decorate_all.log"
+    shell:
+        "python3 scripts/decorateall.py -r . > {log} 2>&1"

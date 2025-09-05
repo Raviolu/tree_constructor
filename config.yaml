@@ -1,0 +1,6 @@
+# SSU type (either "mito" or "18S")
+blast_db: "mito"
+
+# Entrez email
+entrez_email: "youremail@example.com"
+

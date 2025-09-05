@@ -79,11 +79,11 @@ def parse_blast_out_detailed(filepath):
     result["name"] = os.path.basename(filepath)
     return result
 
-def create_matrices(blast_results, root):
+def create_matrices(blast_results, root, entrez_email):
     """
     Creates data matrices from a list of parsed BLAST result dictionaries.
     """
-    Entrez.email = 'your.email@example.com' # It's good practice to set this
+    Entrez.email = entrez_email 
     matrices_dir = os.path.join(root, "matrices")
     
     for res_dict in blast_results:
@@ -108,7 +108,7 @@ def create_matrices(blast_results, root):
         df.to_csv(outname, sep='\t', index=False)
         print(f"Saved matrix to '{outname}'")
 
-def run_all(root, db):
+def run_all(root, db, entrez_email):
     raw_data_dir = os.path.join(root, "raw_data")
     matrices_dir = os.path.join(root, "matrices")
     blast_results_dir = os.path.join(root, "BLAST_results")
@@ -130,7 +130,7 @@ def run_all(root, db):
             results_to_process.append(parse_blast_out_detailed(blast_result_file))
 
     if results_to_process:
-        create_matrices(results_to_process, root)
+        create_matrices(results_to_process, root, entrez_email)
     
     print("\nMatrix generation process finished.")
 
@@ -138,5 +138,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run BLAST, parse results, and generate taxonomy matrices.")
     parser.add_argument("-r", "--root", required=True, help="Root directory of the project.")
     parser.add_argument("-s", "--source", required=True, choices=['mito', '18S'], help="Input BLAST db (either 'mito' or '18S').")
+    parser.add_argument("-e", "--entrez", required=True, help="Entrez email for lookup")
     args = parser.parse_args()
-    run_all(args.root, args.source)
+    run_all(args.root, args.source, args.entrez)

@@ -36,7 +36,7 @@ rule matrix_all:
     log:
         "logs/matrix_all.log"
     shell:
-       "python3 scripts/matrixall.py -r . -s {config[blast_db]} > {log} 2>&1"
+       "python3 scripts/matrixall.py -r . -s {config[blast_db]} -e {config[entrez_email]} > {log} 2>&1"
 
 rule align_all:
     input: 

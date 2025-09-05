@@ -1,4 +1,3 @@
-# Save as scripts/decorateall.py
 import subprocess
 import argparse
 import os
@@ -33,7 +32,6 @@ def decorate_trees(root):
             continue
 
         print(f"Decorating tree for {name}...")
-        # Assuming decorate_tree.py is a Python script that should be executed with python
         command = (
             f"python \"{script_path}\" -t \"{treefile}\" -m \"{matrixfile}\" "
             f"-tm circular -l no -outfile \"{outfile_path}\""

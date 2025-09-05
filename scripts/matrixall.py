@@ -1,4 +1,3 @@
-# Save as scripts/matrixall.py
 from Bio import Entrez, SeqIO
 import subprocess
 import argparse
@@ -46,7 +45,7 @@ def blast(filename, db, root):
         print(f"BLAST error for {filename}:\n{process.stderr}")
 
 def parse_blast_out_detailed(filepath):
-    # This function's internal logic is kept from your original script.
+
     result = {}
     with open(filepath, 'r') as f:
         lines = f.readlines()

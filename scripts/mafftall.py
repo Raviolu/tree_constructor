@@ -1,4 +1,3 @@
-# Save as scripts/mafftall.py
 import subprocess
 import argparse
 import os
@@ -15,7 +14,7 @@ def align(root):
         print(f"Error: Input directory '{raw_data_dir}' not found.")
         return
 
-    # Create the 'aligned' directory if it doesn't exist
+
     os.makedirs(aligned_dir, exist_ok=True)
 
     name_list = [f for f in os.listdir(raw_data_dir) if os.path.isfile(os.path.join(raw_data_dir, f))]

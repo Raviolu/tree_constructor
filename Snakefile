@@ -74,7 +74,7 @@ rule decorate_all:
         trees=get_existing_treefiles,
         matrices=expand("matrices/{sample}_data_matrix.tsv", sample=SAMPLES)
     output:
-        expand("diagrams/{sample}.svg", sample=SAMPLES)
+        expand("diagrams/{sample}.svg", sample=SAMPLES, allow_missing)
     log:
         "logs/decorate_all.log"
     shell:

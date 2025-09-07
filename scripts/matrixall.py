@@ -88,6 +88,7 @@ def create_matrices(blast_results, root, entrez_email):
     
     for res_dict in blast_results:
         taxa_dict = {}
+        info_dict = {}
         basename = res_dict["name"].removesuffix("_b.txt")
         print(f"Fetching taxonomy for {basename}...")
         
@@ -102,8 +103,12 @@ def create_matrices(blast_results, root, entrez_email):
             except Exception as e:
                 print(f"Could not fetch taxonomy for {sseqid} (Query: {query_id}): {e}")
                 taxa_dict[query_id] = ["Not Found"]
+            info_dict[query_id] = hit_info[1:]
 
-        df = pd.DataFrame.from_dict(taxa_dict, orient="index").reset_index()
+
+        query_df = pd.DataFrame.from_dict(taxa_dict, orient="index")
+        info_df = pd.DataFrame.from_dict(info_dict, orient="index")
+        df = query_df.join(info_df, how='inner', lsuffix="_taxa", rsuffix="_info").reset_index()
         outname = os.path.join(matrices_dir, f"{basename}_data_matrix.tsv")
         df.to_csv(outname, sep='\t', index=False)
         print(f"Saved matrix to '{outname}'")

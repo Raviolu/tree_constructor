@@ -1,2 +1,9 @@
 scripts/decorate_tree.py
-
+raw_data/test.fna
+treefiles
+aligned
+BLAST
+BLAST_results
+logs/*
+matrices
+.snakemake

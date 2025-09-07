@@ -11,9 +11,9 @@ SAMPLES = [
 ]
 
 
-#rule all:
-#    input:
-#        expand("diagrams/{sample}.svg", sample=SAMPLES, allow_missing=True)
+rule all:
+    input:
+        expand("diagrams/{sample}.svg", sample=SAMPLES, allow_missing=True)
 
 rule align_all:
     input: 
@@ -43,7 +43,7 @@ rule tree_all:
     input: 
         expand("aligned/{sample}.aln", sample=SAMPLES)
     output:
-        expand("treefiles/{sample}.treefile", sample=SAMPLES, allow_missing=True)
+        expand("treefiles/{sample}.treefile", sample=SAMPLES)
     log:
         "logs/tree_all.log"
     shell:

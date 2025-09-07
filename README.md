@@ -11,7 +11,7 @@ make a raw_data folder
 
 run `snakemake --cores 4 --use-conda` to run program
 
-initial code written by me, edited by Gemini 2.5 Pro
+initial code written by me, edited by Gemini 2.5 Pro + GPT-5 mini
 
 
 ## TO DO

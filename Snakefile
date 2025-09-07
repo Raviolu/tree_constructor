@@ -11,8 +11,6 @@ SAMPLES = [
 ]
 
 # for shell loops
-SAMPLES_STR = " ".join(SAMPLES)
-
 
 rule all:
     input:
@@ -51,18 +49,8 @@ rule tree_all:
         "logs/tree_all.log"
     shell:
         (
-            (
-                "python3 scripts/treeall.py -r . -c {config[tree_command]} > {log} 2>&1 || true; "
-                "for s in {SAMPLES_STR}; do "
-                " if [ ! -s treefiles/${{s}}.treefile ]; then echo 'NO_TREE' > treefiles/${{s}}.treefile; fi; "
-                "done"
-            ) if config["tree_command"] != "" else
-            (
-                "python3 scripts/treeall.py -r . > {log} 2>&1 || true; "
-                "for s in {SAMPLES_STR}; do "
-                " if [ ! -s treefiles/${{s}}.treefile ]; then echo 'NO_TREE' > treefiles/${{s}}.treefile; fi; "
-                "done"
-            )
+            "python3 scripts/treeall.py -r . -c {config[tree_command]} > {log} 2>&1" if config["tree_command"] != "" else
+            "python3 scripts/treeall.py -r . > {log} 2>&1"
         )
 
 rule report_missing_treefiles:

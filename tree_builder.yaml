@@ -1,15 +1,17 @@
 name: tree_builder
 channels:
-  - conda-forge
   - bioconda
+  - conda-forge
   - defaults
 dependencies:
   - snakemake
   - python=3.9
   - biopython
+  - matplotlib
   - pandas
   - ete3 # Assuming decorate_tree.py uses ETE3
   - mafft
   - blast
   - iqtree
   - wget # If you don't got it
+  - scikit-learn # I use this for decorate_tree.py (dont use if dont need)

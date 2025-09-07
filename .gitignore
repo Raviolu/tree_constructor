@@ -7,3 +7,4 @@ BLAST_results
 logs/*
 matrices
 .snakemake
+diagrams/*

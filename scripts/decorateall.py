@@ -33,8 +33,8 @@ def decorate_trees(root):
 
         print(f"Decorating tree for {name}...")
         command = (
-            f"python \"{script_path}\" -t \"{treefile}\" -m \"{matrixfile}\" "
-            f"-tm circular -l no -outfile \"{outfile_path}\""
+            f"python \"{script_path}\" --tree \"{treefile}\" --matrix \"{matrixfile}\" "
+            f"-tm circular -l no --outfile \"{outfile_path}\""
         )
         
         process = subprocess.run(command, shell=True, capture_output=True, text=True)

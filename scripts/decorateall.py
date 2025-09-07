@@ -28,7 +28,35 @@ def decorate_trees(root):
         outfile_path = os.path.join(diagrams_dir, name) # The decorate script may add its own extension
 
         if not os.path.exists(matrixfile):
-            print(f"Warning: Matrix file for '{name}' not found. Skipping decoration.")
+            print(f"Warning: Matrix file for '{name}' not found. Creating placeholder diagram and skipping decoration.")
+            # create a placeholder svg so Snakemake has the expected output
+            try:
+                with open(f"{outfile_path}.svg", "w") as ph:
+                    ph.write(f"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"60\">"
+                             f"<rect width=\"100%\" height=\"100%\" fill=\"#eee\"/>"
+                             f"<text x=\"10\" y=\"35\" font-size=\"14\">Matrix missing for {name}</text>"
+                             f"</svg>")
+            except Exception as e:
+                print(f"Error writing placeholder diagram for {name}: {e}")
+            continue
+
+        # skip placeholder treefiles created when IQ-TREE failed
+        try:
+            with open(treefile, "r") as tf:
+                first = tf.read(10)
+                if "NO_TREE" in first:
+                    print(f"Skipping decoration for {name}: no tree was generated. Creating placeholder diagram and skipping decoration.")
+                    try:
+                        with open(f"{outfile_path}.svg", "w") as ph:
+                            ph.write(f"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"60\">"
+                                     f"<rect width=\"100%\" height=\"100%\" fill=\"#eee\"/>"
+                                     f"<text x=\"10\" y=\"35\" font-size=\"14\">No tree generated for {name}</text>"
+                                     f"</svg>")
+                    except Exception as e:
+                        print(f"Error writing placeholder diagram for {name}: {e}")
+                    continue
+        except Exception:
+            print(f"Warning: Cannot read treefile for {name}. Skipping.")
             continue
 
         print(f"Decorating tree for {name}...")

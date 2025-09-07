@@ -10,6 +10,9 @@ SAMPLES = [
     if ".gitkeep" not in os.path.basename(f)
 ]
 
+# for shell loops
+SAMPLES_STR = " ".join(SAMPLES)
+
 
 rule all:
     input:
@@ -40,7 +43,7 @@ rule matrix_all:
        "python3 scripts/matrixall.py -r . -s {config[blast_db]} -e {config[entrez_email]} > {log} 2>&1"
 
 rule tree_all:
-    input: 
+    input:
         expand("aligned/{sample}.aln", sample=SAMPLES)
     output:
         expand("treefiles/{sample}.treefile", sample=SAMPLES)
@@ -48,11 +51,20 @@ rule tree_all:
         "logs/tree_all.log"
     shell:
         (
-            "python3 scripts/treeall.py -r . -c {config[tree_command]} > {log} 2>&1"
-            if config["tree_command"] != ""
-            else
-            "python3 scripts/treeall.py -r . > {log} 2>&1" 
+            (
+                "python3 scripts/treeall.py -r . -c {config[tree_command]} > {log} 2>&1 || true; "
+                "for s in {SAMPLES_STR}; do "
+                " if [ ! -s treefiles/${{s}}.treefile ]; then echo 'NO_TREE' > treefiles/${{s}}.treefile; fi; "
+                "done"
+            ) if config["tree_command"] != "" else
+            (
+                "python3 scripts/treeall.py -r . > {log} 2>&1 || true; "
+                "for s in {SAMPLES_STR}; do "
+                " if [ ! -s treefiles/${{s}}.treefile ]; then echo 'NO_TREE' > treefiles/${{s}}.treefile; fi; "
+                "done"
+            )
         )
+
 rule report_missing_treefiles:
     input:
         treefiles=expand("treefiles/{sample}.treefile", sample=SAMPLES, allow_missing=True)
@@ -64,7 +76,6 @@ rule report_missing_treefiles:
             for f in missing:
                 out.write(f"{f}\n")
         print(f"Missing treefiles: {missing}")
-    
 
 rule decorate_all:
     input:

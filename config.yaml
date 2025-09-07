@@ -4,3 +4,6 @@ blast_db: "mito"
 # Entrez email
 entrez_email: "youremail@example.com"
 
+# IQ-TREE command
+tree_command: ""
+

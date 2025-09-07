@@ -2,7 +2,7 @@ import subprocess
 import argparse
 import os
 
-def build_trees(root):
+def build_trees(root, command):
     """
     Generates phylogenetic trees for all files in the 'aligned' directory
     and saves them to the 'treefiles' directory.
@@ -30,7 +30,7 @@ def build_trees(root):
         aln_file_path = os.path.join(aligned_dir, aln_filename)
         prefix_path = os.path.join(treefiles_dir, basename)
         
-        command = f"iqtree -quiet -pre \"{prefix_path}\" -m TEST -alrt 1000 -bb 1000 -nt AUTO -s \"{aln_file_path}\""
+        command = f"iqtree -quiet -pre \"{prefix_path}\" {command} -s \"{aln_file_path}\""
         
         process = subprocess.run(command, shell=True, capture_output=True, text=True)
         if process.returncode != 0:
@@ -43,5 +43,7 @@ def build_trees(root):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate phylogenetic trees from aligned sequences using IQ-TREE.")
     parser.add_argument("-r", "--root", required=True, help="Root directory of the project.")
+    parser.add_argument("-c", "--comand", required=False, help="Command to pass to IQ-Tree", default="-m TEST -alrt 1000 -bb 1000 -nt AUTO")
     args = parser.parse_args()
-    build_trees(args.root)
+
+    build_trees(args.root, args.command)

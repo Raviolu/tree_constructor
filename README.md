@@ -10,3 +10,9 @@ run `snakemake --cores 4 --use-conda` to run program
 
 initial code written by me, edited by Gemini 2.5 Pro
 
+
+## TO DO
+--> use more robust parseblast outputs to make better matrix
+--> add a setting to add a color col to datamatrix (low priority)
+--> add a config to control tree gen command
+

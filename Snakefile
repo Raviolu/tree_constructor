@@ -3,16 +3,13 @@ import glob
 
 configfile: "config.yaml"
 
-
 SAMPLES = [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.fna")] + \
             [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.fa")] + \
             [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.fasta")]
 
-
 rule all:
     input:
         expand("diagrams/{sample}.svg", sample=SAMPLES)
-
 
 rule align_all:
     input: 
@@ -36,9 +33,9 @@ rule matrix_all:
     log:
         "logs/matrix_all.log"
     shell:
-       "python3 scripts/matrixall.py -r . -s {config[blast_db]} -e {config[entrez_email]} > {log} 2>&1"
+       "python3 scripts/matrixall.py -r . -s {config[blast_db]} -e {sconfig[entrez_email]} > {log} 2>&1"
 
-rule align_all:
+rule tree_all:
     input: 
         expand("aligned/{sample}.aln", sample=SAMPLES)
     output:
@@ -46,7 +43,12 @@ rule align_all:
     log:
         "logs/tree_all.log"
     shell:
-       "python3 scripts/treeall.py -r . > {log} 2>&1"
+        (
+            "python3 scripts/treeall.py -r . -c {config[tree_command]} > {log} 2>&1"
+            if config["tree_command"] != ""
+            else
+            "python3 scripts/treeall.py -r . > {log} 2>&1" 
+        )
 
 rule decorate_all:
     input: 

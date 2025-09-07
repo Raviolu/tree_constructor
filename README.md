@@ -4,7 +4,7 @@ Make trees using IQ-Tree
 
 decorate_tree.py script not included. Inlcude any scripts that you'd like to generate trees that uses -t flag for treefiles and -m flag form matrices
 
-run `conda create -f tree_builder.yaml && conda activate tree_builder` to create necessary conda env
+run `conda env create -f tree_builder.yaml && conda activate tree_builder` to create necessary conda env
 
 run `snakemake --cores 4 --use-conda` to run program
 

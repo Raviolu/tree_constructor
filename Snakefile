@@ -65,13 +65,10 @@ rule report_missing_treefiles:
                 out.write(f"{f}\n")
         print(f"Missing treefiles: {missing}")
     
-def get_existing_treefiles(wildcards):
-    treefiles = glob.glob("treefiles/*.treefile")
-    return treefiles
 
 rule decorate_all:
-    input: 
-        trees=get_existing_treefiles,
+    input:
+        trees=expand("treefiles/{sample}.treefile", sample=SAMPLES, allow_missing=True),
         matrices=expand("matrices/{sample}_data_matrix.tsv", sample=SAMPLES)
     output:
         expand("diagrams/{sample}.svg", sample=SAMPLES, allow_missing=True)

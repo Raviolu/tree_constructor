@@ -15,7 +15,10 @@ initial code written by me, edited by Gemini 2.5 Pro
 
 
 ## TO DO
---> ~~use more robust parseblast outputs to make better matrix~~ DONE \n
---> add a setting to add a color col to datamatrix (low priority) \n
---> ~~add a config to control tree gen command~~ DONE \n
+--> ~~use more robust parseblast outputs to make better matrix~~ DONE 
+
+--> add a setting to add a color col to datamatrix (low priority) 
+
+--> ~~add a config to control tree gen command~~ DONE 
+
 --> Make it easier use decorate_tree scripts (less hardcoding of input commands --> move that to config.yml) 

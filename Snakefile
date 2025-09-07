@@ -3,12 +3,13 @@ import glob
 
 configfile: "config.yaml"
 
-SAMPLES = [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.fna")] + \
-            [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.fa")] + \
-            [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.fasta")]
+SAMPLES = [
+    os.path.basename(f).rsplit('.', 1)[0]
+    for ext in ("fna", "fa", "fasta")
+    for f in glob.glob(f"raw_data/*.{ext}")
+    if ".gitkeep" not in os.path.basename(f)
+]
 
-if ".gitkeep" in SAMPLES:
-    SAMPLES.remove(".gitkeep")
 
 rule all:
     input:
@@ -42,7 +43,7 @@ rule tree_all:
     input: 
         expand("aligned/{sample}.aln", sample=SAMPLES)
     output:
-        expand("treefiles/{sample}.treefile", sample=SAMPLES)
+        expand("treefiles/{sample}.treefile", sample=SAMPLES, allow_missing=True)
     log:
         "logs/tree_all.log"
     shell:
@@ -52,10 +53,21 @@ rule tree_all:
             else
             "python3 scripts/treeall.py -r . > {log} 2>&1" 
         )
+rule report_missing_treefiles:
+    input:
+        treefiles=expand("treefiles/{sample}.treefile", sample=SAMPLES, allow_missing=True)
+    output:
+        "logs/missing_treefiles.txt"
+    run:
+        missing = [f for f in input.treefiles if not os.path.exists(f)]
+        with open(output[0], "w") as out:
+            for f in missing:
+                out.write(f"{f}\n")
+        print(f"Missing treefiles: {missing}")
 
 rule decorate_all:
     input: 
-        trees=expand("treefiles/{sample}.treefile", sample=SAMPLES),
+        trees=expand("treefiles/{sample}.treefile", sample=SAMPLES, allow_missing=True),
         matrices=expand("matrices/{sample}_data_matrix.tsv", sample=SAMPLES)
     output:
         expand("diagrams/{sample}.svg", sample=SAMPLES)

@@ -7,6 +7,9 @@ SAMPLES = [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.
             [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.fa")] + \
             [os.path.basename(f).rsplit('.', 1)[0] for f in glob.glob("raw_data/*.fasta")]
 
+if ".gitkeep" in SAMPLES:
+    SAMPLES.remove(".gitkeep")
+
 rule all:
     input:
         expand("diagrams/{sample}.svg", sample=SAMPLES)

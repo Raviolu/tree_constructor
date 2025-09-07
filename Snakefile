@@ -13,7 +13,7 @@ SAMPLES = [
 
 rule all:
     input:
-        expand("diagrams/{sample}.svg", sample=SAMPLES)
+        expand("diagrams/{sample}.svg", sample=SAMPLES, allow_missing=True)
 
 rule align_all:
     input: 

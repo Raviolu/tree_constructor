@@ -38,7 +38,7 @@ rule matrix:
 
 rule tree:
     input:
-        "aligend/{sample}.aln"
+        "aligned/{sample}.aln"
     output:
         "treefiles/{sample}.treefile"
     log:

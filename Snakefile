@@ -16,54 +16,40 @@ rule all:
     input:
         expand("diagrams/{sample}.svg", sample=SAMPLES, allow_missing=True)
 
-rule align_all:
+rule align:
     input: 
-        glob.glob("raw_data/*.fna"),
-        glob.glob("raw_data/*.fasta"),
-        glob.glob("raw_data/*.fa")
+        "raw_data/{sample}.fna"
     output:
-        expand("aligned/{sample}.aln", sample=SAMPLES)
+        "aligned/{sample}.aln"
     log:
         "logs/mafft_all.log"
     shell:
        "python3 scripts/mafftall.py -r . > {log} 2>&1"
 
-rule matrix_all:
+rule matrix:
     input: 
-        glob.glob("raw_data/*.fna"),
-        glob.glob("raw_data/*.fasta"),
-        glob.glob("raw_data/*.fa")
+        "raw_data/{sample}.fna"
     output:
-        expand("matrices/{sample}_data_matrix.tsv", sample=SAMPLES)
+        "matrices/{sample}_data_matrix.tsv"
     log:
         "logs/matrix_all.log"
     shell:
        "python3 scripts/matrixall.py -r . -s {config[blast_db]} -e {config[entrez_email]} > {log} 2>&1"
 
-rule tree_all:
+rule tree:
     input:
-        glob.glob("aligend/*.aln")
+        "aligend/{sample}.aln"
     output:
-        expand("treefiles/{sample}.treefile", sample=SAMPLES)
+        ("treefiles/{sample}.treefile"
     log:
         "logs/tree_all.log"
     shell:
         (
-            "python3 scripts/treeall.py -r . -c {config[tree_command]} > {log} 2>&1" if config["tree_command"] != "" else
+            "python3 scripts/treeall.py -r . -c {config[tree_command]} > {log} 2>&1" 
+            if config["tree_command"] != "" 
+            else
             "python3 scripts/treeall.py -r . > {log} 2>&1"
         )
-
-rule report_missing_treefiles:
-    input:
-        treefiles=expand("treefiles/{sample}.treefile", sample=SAMPLES, allow_missing=True)
-    output:
-        "logs/missing_treefiles.txt"
-    run:
-        missing = [f for f in input.treefiles if not os.path.exists(f)]
-        with open(output[0], "w") as out:
-            for f in missing:
-                out.write(f"{f}\n")
-        print(f"Missing treefiles: {missing}")
 
 rule decorate_all:
     input:

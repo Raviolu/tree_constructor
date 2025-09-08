@@ -5,14 +5,14 @@ import os
 import re
 import pandas as pd
 
-def blast(filename, db, root):
+def blast(filename, db):
     """
     Runs BLAST for a given file against a specified database.
     Manages directories and database downloads.
     """
-    raw_data_path = os.path.join(root, "raw_data", filename)
-    blast_dir = os.path.join(root, "BLAST")
-    blast_results_dir = os.path.join(root, "BLAST_results")
+    raw_data_path = os.path.join("raw_data", filename)
+    blast_dir = "BLAST"
+    blast_results_dir = "BLAST_results"
     basename = os.path.splitext(filename)[0]
     output_file = os.path.join(blast_results_dir, f"{basename}_b.txt")
     
@@ -82,12 +82,12 @@ def parse_blast_out_detailed(filepath):
     result["name"] = os.path.basename(filepath)
     return result
 
-def create_matrices(blast_results, root, entrez_email):
+def create_matrices(blast_results, entrez_email):
     """
     Creates data matrices from a list of parsed BLAST result dictionaries.
     """
     Entrez.email = entrez_email 
-    matrices_dir = os.path.join(root, "matrices")
+    matrices_dir = "matrices"
     
     for res_dict in blast_results:
         taxa_dict = {}
@@ -116,36 +116,36 @@ def create_matrices(blast_results, root, entrez_email):
         df.to_csv(outname, sep='\t', index=False)
         print(f"Saved matrix to '{outname}'")
 
-def run_all(root, db, entrez_email):
-    raw_data_dir = os.path.join(root, "raw_data")
-    matrices_dir = os.path.join(root, "matrices")
-    blast_results_dir = os.path.join(root, "BLAST_results")
+def run(filename, db, entrez_email):
+    raw_data_dir = "raw_data"
+    matrices_dir = "matrices"
+    blast_results_dir = "BLAST_results"
     os.makedirs(matrices_dir, exist_ok=True)
 
-    name_list = [f for f in os.listdir(raw_data_dir) if os.path.isfile(os.path.join(raw_data_dir, f))]
-    
     results_to_process = []
-    for filename in name_list:
-        basename = os.path.splitext(filename)[0]
-        matrix_path = os.path.join(matrices_dir, f"{basename}_data_matrix.tsv")
-        if os.path.exists(matrix_path):
-            print(f"Matrix for '{basename}' already exists. Skipping.")
-            continue
+
+    basename = os.path.splitext(filename)[0]
+    matrix_path = os.path.join(matrices_dir, f"{basename}_data_matrix.tsv")
+    if os.path.exists(matrix_path):
+        print(f"Matrix for '{basename}' already exists. Skipping.")
         
-        blast(filename, db, root)
-        blast_result_file = os.path.join(blast_results_dir, f"{basename}_b.txt")
-        if os.path.exists(blast_result_file):
-            results_to_process.append(parse_blast_out_detailed(blast_result_file))
+        
+    blast(filename, db)
+
+    blast_result_file = os.path.join(blast_results_dir, f"{basename}_b.txt")
+
+    if os.path.exists(blast_result_file):
+        results_to_process.append(parse_blast_out_detailed(blast_result_file))
 
     if results_to_process:
-        create_matrices(results_to_process, root, entrez_email)
+        create_matrices(results_to_process, entrez_email)
     
     print("\nMatrix generation process finished.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run BLAST, parse results, and generate taxonomy matrices.")
-    parser.add_argument("-r", "--root", required=True, help="Root directory of the project.")
+    parser.add_argument("-f", "--file", required=True, help="Root directory of the project.")
     parser.add_argument("-s", "--source", required=True, choices=['mito', '18S'], help="Input BLAST db (either 'mito' or '18S').")
     parser.add_argument("-e", "--entrez", required=True, help="Entrez email for lookup")
     args = parser.parse_args()
-    run_all(args.root, args.source, args.entrez)
+    run(args.file, args.source, args.entrez)

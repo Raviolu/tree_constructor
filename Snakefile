@@ -24,7 +24,7 @@ rule align:
     log:
         "logs/mafft_all.log"
     shell:
-       "python3 scripts/mafftall.py -r . > {log} 2>&1"
+       "python3 scripts/mafftall.py -f {input} > {log} 2>&1"
 
 rule matrix:
     input: 
@@ -34,7 +34,7 @@ rule matrix:
     log:
         "logs/matrix_all.log"
     shell:
-       "python3 scripts/matrixall.py -r . -s {config[blast_db]} -e {config[entrez_email]} > {log} 2>&1"
+       "python3 scripts/matrixall.py -r {input} -s {config[blast_db]} -e {config[entrez_email]} > {log} 2>&1"
 
 rule tree:
     input:
@@ -48,7 +48,7 @@ rule tree:
             "python3 scripts/treeall.py -r . -c {config[tree_command]} > {log} 2>&1" 
             if config["tree_command"] != "" 
             else
-            "python3 scripts/treeall.py -r . > {log} 2>&1"
+            "python3 scripts/treeall.py -r {input} > {log} 2>&1"
         )
 
 rule decorate_all:

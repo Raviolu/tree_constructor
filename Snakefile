@@ -40,7 +40,7 @@ rule tree:
     input:
         "aligend/{sample}.aln"
     output:
-        ("treefiles/{sample}.treefile"
+        "treefiles/{sample}.treefile"
     log:
         "logs/tree_all.log"
     shell:

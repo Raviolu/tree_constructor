@@ -16,7 +16,7 @@ def build_trees(aln_filename, command):
 
     os.makedirs(treefiles_dir, exist_ok=True)
 
-    basename = os.path.splitext(aln_filename)[0]
+    basename = os.path.splitext(os.path.basename(aln_filename))[0]
     treefile_path = os.path.join(treefiles_dir, f"{basename}.treefile")
         # If a placeholder from a previous failed run exists, remove it so we can try again.
     if os.path.exists(treefile_path):

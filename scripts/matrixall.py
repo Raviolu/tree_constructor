@@ -13,7 +13,7 @@ def blast(filename, db):
     raw_data_path = filename
     blast_dir = "BLAST"
     blast_results_dir = "BLAST_results"
-    basename = os.path.splitext(filename)[0]
+    basename = os.path.splitext(os.path.basename(filename))[0]
     output_file = os.path.join(blast_results_dir, f"{basename}_b.txt")
     
     db_map = {"mito": "mito", "18S": "SSU_eukaryote_rRNA"}

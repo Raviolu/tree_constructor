@@ -22,7 +22,7 @@ rule align:
     output:
         "aligned/{sample}.aln"
     log:
-        "logs/mafft_all.log"
+        "logs/mafft_all_{sample}.log"
     shell:
        "python3 scripts/mafftall.py -f {input} > {log} 2>&1"
 
@@ -32,7 +32,7 @@ rule matrix:
     output:
         "matrices/{sample}_data_matrix.tsv"
     log:
-        "logs/matrix_all.log"
+        "logs/matrix_all_{sample}.log"
     shell:
        "python3 scripts/matrixall.py -r {input} -s {config[blast_db]} -e {config[entrez_email]} > {log} 2>&1"
 
@@ -42,7 +42,7 @@ rule tree:
     output:
         "treefiles/{sample}.treefile"
     log:
-        "logs/tree_all.log"
+        "logs/tree_all_{sample}.log"
     shell:
         (
             "python3 scripts/treeall.py -r . -c {config[tree_command]} > {log} 2>&1" 
@@ -60,4 +60,4 @@ rule decorate_all:
     log:
         "logs/decorate_all.log"
     shell:
-        "python3 scripts/decorateall.py -r . > {log} 2>&1"
+        "python3 scripts/decorateall.py -f . > {log} 2>&1"

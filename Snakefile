@@ -42,7 +42,7 @@ rule matrix_all:
 
 rule tree_all:
     input:
-        expand("aligned/{sample}.aln", sample=SAMPLES)
+        glob.glob("aligend/*.aln")
     output:
         expand("treefiles/{sample}.treefile", sample=SAMPLES)
     log:

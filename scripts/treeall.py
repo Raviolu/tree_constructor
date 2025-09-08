@@ -41,7 +41,7 @@ def build_trees(aln_filename, command):
                 pass
 
         print(f"Generating tree for {basename}...")
-        aln_file_path = os.path.join(aligned_dir, aln_filename)
+        aln_file_path = aln_filename
         prefix_path = os.path.join(treefiles_dir, basename)
         
         command = f"iqtree -pre \"{prefix_path}\" {command} -s \"{aln_file_path}\""

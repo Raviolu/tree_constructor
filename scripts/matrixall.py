@@ -10,7 +10,7 @@ def blast(filename, db):
     Runs BLAST for a given file against a specified database.
     Manages directories and database downloads.
     """
-    raw_data_path = os.path.join("raw_data", filename)
+    raw_data_path = filename
     blast_dir = "BLAST"
     blast_results_dir = "BLAST_results"
     basename = os.path.splitext(filename)[0]

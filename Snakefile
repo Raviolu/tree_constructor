@@ -34,7 +34,7 @@ rule matrix:
     log:
         "logs/matrix_all_{sample}.log"
     shell:
-       "python3 scripts/matrixall.py -r {input} -s {config[blast_db]} -e {config[entrez_email]} > {log} 2>&1"
+       "python3 scripts/matrixall.py -f {input} -s {config[blast_db]} -e {config[entrez_email]} > {log} 2>&1"
 
 rule tree:
     input:

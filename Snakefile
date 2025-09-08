@@ -45,10 +45,10 @@ rule tree:
         "logs/tree_all_{sample}.log"
     shell:
         (
-            "python3 scripts/treeall.py -r . -c {config[tree_command]} > {log} 2>&1" 
+            "python3 scripts/treeall.py -f {input} -c {config[tree_command]} > {log} 2>&1" 
             if config["tree_command"] != "" 
             else
-            "python3 scripts/treeall.py -r {input} > {log} 2>&1"
+            "python3 scripts/treeall.py -f {input} > {log} 2>&1"
         )
 
 rule decorate_all:

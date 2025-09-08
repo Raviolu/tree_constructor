@@ -18,7 +18,7 @@ rule all:
 
 rule align:
     input: 
-        "raw_data/{sample}.fna"
+        "{sample}.fna"
     output:
         "aligned/{sample}.aln"
     log:
@@ -28,7 +28,7 @@ rule align:
 
 rule matrix:
     input: 
-        "raw_data/{sample}.fna"
+        "{sample}.fna"
     output:
         "matrices/{sample}_data_matrix.tsv"
     log:
@@ -38,7 +38,7 @@ rule matrix:
 
 rule tree:
     input:
-        "aligned/{sample}.aln"
+        "{sample}.aln"
     output:
         "treefiles/{sample}.treefile"
     log:

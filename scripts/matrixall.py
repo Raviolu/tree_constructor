@@ -116,6 +116,8 @@ def create_matrices(blast_results, entrez_email):
         df.to_csv(outname, sep='\t', index=False)
         print(f"Saved matrix to '{outname}'")
 
+# In matrixall.py
+
 def run(filename, db, entrez_email):
     raw_data_dir = "raw_data"
     matrices_dir = "matrices"
@@ -123,12 +125,13 @@ def run(filename, db, entrez_email):
     os.makedirs(matrices_dir, exist_ok=True)
 
     results_to_process = []
-
-    basename = os.path.splitext(filename)[0]
+    
+    # --- FIX is here ---
+    basename = os.path.splitext(os.path.basename(filename))[0]
     matrix_path = os.path.join(matrices_dir, f"{basename}_data_matrix.tsv")
     if os.path.exists(matrix_path):
         print(f"Matrix for '{basename}' already exists. Skipping.")
-        
+        return # Actually exit the function to skip the work
         
     blast(filename, db)
 
@@ -141,7 +144,6 @@ def run(filename, db, entrez_email):
         create_matrices(results_to_process, entrez_email)
     
     print("\nMatrix generation process finished.")
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run BLAST, parse results, and generate taxonomy matrices.")
     parser.add_argument("-f", "--file", required=True, help="Root directory of the project.")

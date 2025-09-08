@@ -63,7 +63,7 @@ def build_trees(aln_filename, command):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate phylogenetic trees from aligned sequences using IQ-TREE.")
-    parser.add_argument("-r", "--file", required=True, help="Root directory of the project.")
+    parser.add_argument("-f", "--file", required=True, help="Root directory of the project.")
     parser.add_argument("-c", "--command", required=False, help="Command to pass to IQ-Tree", default="-m TEST -alrt 1000 -bb 1000 -nt AUTO")
     args = parser.parse_args()
 

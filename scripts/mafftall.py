@@ -17,7 +17,7 @@ def align(filename):
     os.makedirs(aligned_dir, exist_ok=True)
 
     basename = os.path.splitext(filename)[0]
-    input_path = filename
+    input_path = "../" + filename
     output_path = os.path.join(aligned_dir, f"{basename}.aln")
 
     if os.path.exists(output_path):

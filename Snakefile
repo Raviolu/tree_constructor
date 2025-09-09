@@ -60,4 +60,4 @@ rule decorate_all:
     log:
         "logs/decorate_all.log"
     shell:
-        "python3 scripts/decorateall.py -f . > {log} 2>&1"
+        "python3 scripts/decorateall.py -r . > {log} 2>&1"

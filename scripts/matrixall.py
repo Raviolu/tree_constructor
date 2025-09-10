@@ -74,9 +74,11 @@ def parse_blast_out_detailed(filepath):
                                 score = int(m.group(1).replace(',', ''))
                             if m2 := re.search(r'Identities\s*=\s*\d+/\d+\s+\((\d+)%\)', lines[k]):
                                 pident = int(m2.group(1))
-                        if score is not None and pident is not None:
+                            if m3 := re.search(r'Expect\s*=\s*([-\da-z]+)', lines[k]):
+                                evalue = float(m3.group(1))
+                        if score is not None and pident is not None and evalue is not None:
                             break
-                    result[query] = [desc, score, length, pident]
+                    result[query] = [desc, score, length, pident, evalue]
                     break
             query = None
     result["name"] = os.path.basename(filepath)
@@ -98,7 +100,7 @@ def create_matrices(blast_results, entrez_email):
         for query_id, hit_info in res_dict.items():
             if query_id == "name":
                 continue
-            sseqid = hit_info[0].split(" ")[0] # Get accession ID
+            sseqid = hit_info[0].split(" ")[0] 
             try:
                 with Entrez.efetch(db='nuccore', id=sseqid, rettype="gb", retmode="text") as handle:
                     record = SeqIO.read(handle, "genbank")
@@ -126,12 +128,11 @@ def run(filename, db, entrez_email):
 
     results_to_process = []
     
-    # --- FIX is here ---
     basename = os.path.splitext(os.path.basename(filename))[0]
     matrix_path = os.path.join(matrices_dir, f"{basename}_data_matrix.tsv")
     if os.path.exists(matrix_path):
         print(f"Matrix for '{basename}' already exists. Skipping.")
-        return # Actually exit the function to skip the work
+        return 
         
     blast(filename, db)
 

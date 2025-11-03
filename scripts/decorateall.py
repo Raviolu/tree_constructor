@@ -1,6 +1,7 @@
 import subprocess
 import argparse
 import os
+import pandas as pd
 
 def decorate_trees(root):
     """
@@ -59,11 +60,19 @@ def decorate_trees(root):
             print(f"Warning: Cannot read treefile for {name}. Skipping.")
             continue
 
-        print(f"Decorating tree for {name}...")
-        command = (
-            f"python \"{script_path}\" --tree \"{treefile}\" --matrix \"{matrixfile}\" "
-            f"-tm circular -l no --outfile \"{outfile_path}\""
-        )
+        try:
+            df = pd.read(matrixfile)
+            num_columns = df.shape[1]
+        
+            print(f"Decorating tree for {name}...")
+            command = (
+                f"python \"{script_path}\" --tree \"{treefile}\" --matrix \"{matrixfile}\" -mp 0.95 -bgc"
+                f"-tm circular -l no --outfile \"{outfile_path}\" -bgc \"{num_columns}\""
+            )
+
+        except Exception:
+            print(f"Warning: Cannot determine shape of {matrixfile}")
+            continue
         
         process = subprocess.run(command, shell=True, capture_output=True, text=True)
         if process.returncode != 0:

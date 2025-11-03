@@ -84,6 +84,26 @@ def parse_blast_out_detailed(filepath):
     result["name"] = os.path.basename(filepath)
     return result
 
+def color_col(df):
+    colors = ["LightGreen", "DarkOrchid", "OliveDrab", "MediumAquamarine", "LightSeaGreen",
+               "PaleTurquoise", "Aquamarine", "Turquoise", "CadetBlue", "LightSteelBlue",
+                "LightBlue", "SkyBlue", "Cornsilk", "BurlyWood", "RosyBrown", "SandyBrown",
+               "DarkGoldenRod", "Peru", "Chocolate", "SaddleBrown", "Sienna", "Brown",
+                "Violet", "BlueViolet", "DarkMagenta", "SlateBlue"]
+    unique_labels = df.iloc[:, 1].unique_values()
+    label_color_dict = {}
+    color_index = 0
+    for label in unique_labels:
+        label_color_dict[label] = colors[color_index]
+        color_index += 1
+        if color_index >= len(color_index):
+            color_index = 0
+    
+    df["color"] = df.iloc[:, 1].apply(lambda x: label_color_dict[x])
+
+    return df
+
+
 def create_matrices(blast_results, entrez_email):
     """
     Creates data matrices from a list of parsed BLAST result dictionaries.
@@ -114,6 +134,7 @@ def create_matrices(blast_results, entrez_email):
         query_df = pd.DataFrame.from_dict(taxa_dict, orient="index")
         info_df = pd.DataFrame.from_dict(info_dict, orient="index")
         df = info_df.join(query_df, how='inner', lsuffix="_info", rsuffix="_taxa").reset_index()
+        df = color_col(df)
         outname = os.path.join(matrices_dir, f"{basename}_data_matrix.tsv")
         df.to_csv(outname, sep='\t', index=False)
         print(f"Saved matrix to '{outname}'")

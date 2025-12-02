@@ -1,5 +1,6 @@
 import os
 import glob
+import shlex
 
 configfile: "config.yaml"
 
@@ -36,6 +37,8 @@ rule matrix:
     shell:
        "python3 scripts/matrixall.py -f {input} -s {config[blast_db]} -e {config[entrez_email]} > {log} 2>&1"
 
+TREE_CMD = shlex.quote(config.get("tree_command", ""))
+
 rule tree:
     input:
         "aligned/{sample}.aln"
@@ -45,7 +48,7 @@ rule tree:
         "logs/tree_all_{sample}.log"
     shell:
         (
-            "python3 scripts/treeall.py -f {input} -c {config[tree_command]} > {log} 2>&1" 
+            "python3 scripts/treeall.py -f {input} -c {TREE_CMD} > {log} 2>&1" 
             if config["tree_command"] != "" 
             else
             "python3 scripts/treeall.py -f {input} > {log} 2>&1"

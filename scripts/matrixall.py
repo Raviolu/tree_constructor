@@ -31,11 +31,11 @@ def blast(filename, db):
         if not os.path.exists(f"{db_path}.nhr"):
             try:
                 print(f"Installing the {db_name} BLAST database...")
-            cmd = f"cd \"{blast_dir}\" && wget https://ftp.ncbi.nlm.nih.gov/blast/db/{db_name}.tar.gz && tar -xzf {db_name}.tar.gz && rm {db_name}.tar.gz"
-            subprocess.run(cmd, shell=True, check=True, capture_output=True)
-            print("Database installed.")
-        except subprocess.CalledProcessError as e:
-            print(f"Error installing BLAST database{e.stderr}")
+                cmd = f"cd \"{blast_dir}\" && wget https://ftp.ncbi.nlm.nih.gov/blast/db/{db_name}.tar.gz && tar -xzf {db_name}.tar.gz && rm {db_name}.tar.gz"
+                subprocess.run(cmd, shell=True, check=True, capture_output=True)
+                print("Database installed.")
+            except subprocess.CalledProcessError as e:
+                print(f"Error installing BLAST database{e.stderr}")
     else:
         os.makedirs(blast_dir, exist_ok=True)
         os.makedirs(blast_results_dir, exist_ok=True)

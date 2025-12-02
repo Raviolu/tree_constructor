@@ -176,7 +176,7 @@ def run(filename, db, entrez_email):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run BLAST, parse results, and generate taxonomy matrices.")
     parser.add_argument("-f", "--file", required=True, help="Root directory of the project.")
-    parser.add_argument("-s", "--source", required=True, choices=['mito', '18S'], help="Input BLAST db (either 'mito' or '18S').")
+    parser.add_argument("-s", "--source", required=True, choices=['mito', '18S', 'custom'], help="Input BLAST db (either 'mito' or '18S').")
     parser.add_argument("-e", "--entrez", required=True, help="Entrez email for lookup")
     args = parser.parse_args()
     run(args.file, args.source, args.entrez)

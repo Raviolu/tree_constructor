@@ -16,29 +16,36 @@ def blast(filename, db):
     basename = os.path.splitext(os.path.basename(filename))[0]
     output_file = os.path.join(blast_results_dir, f"{basename}_b.txt")
     
-    db_map = {"mito": "mito", "18S": "SSU_eukaryote_rRNA"}
+    db_map = {"mito": "mito", "18S": "SSU_eukaryote_rRNA", "custom": "customdb"}
+    
     db_name = db_map.get(db)
     if not db_name:
         print(f"Error: Invalid database source '{db}'. Choose 'mito' or '18S'.")
         return
 
-    os.makedirs(blast_dir, exist_ok=True)
-    os.makedirs(blast_results_dir, exist_ok=True)
+    if db_name != "customdb":
+        os.makedirs(blast_dir, exist_ok=True)
+        os.makedirs(blast_results_dir, exist_ok=True)
 
-    db_path = os.path.join(blast_dir, db_name)
-    if not os.path.exists(f"{db_path}.nhr"):
-        try:
-            print(f"Installing the {db_name} BLAST database...")
+        db_path = os.path.join(blast_dir, db_name)
+        if not os.path.exists(f"{db_path}.nhr"):
+            try:
+                print(f"Installing the {db_name} BLAST database...")
             cmd = f"cd \"{blast_dir}\" && wget https://ftp.ncbi.nlm.nih.gov/blast/db/{db_name}.tar.gz && tar -xzf {db_name}.tar.gz && rm {db_name}.tar.gz"
             subprocess.run(cmd, shell=True, check=True, capture_output=True)
             print("Database installed.")
         except subprocess.CalledProcessError as e:
             print(f"Error installing BLAST database{e.stderr}")
+    else:
+        os.makedirs(blast_dir, exist_ok=True)
+        os.makedirs(blast_results_dir, exist_ok=True)
+        db_path = os.path.join(blast_dir, db_name)
+
 
     if os.path.exists(output_file):
         print(f"BLAST results for '{basename}' found. Skipping BLAST.")
         return
-
+    
     print(f"Running BLAST for {filename}...")
     cmd = f"blastn -query \"{raw_data_path}\" -db \"{db_path}\" -out \"{output_file}\""
     process = subprocess.run(cmd, shell=True, capture_output=True, text=True)
